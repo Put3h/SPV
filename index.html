@@ -1,5 +1,243 @@
-<!doctype html>
-<html>
-<head><meta charset="utf-8"><title>SPV Ramai - KAO</title></head>
-<body><h1>Halo dari GitHub Pages!</h1></body>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Katalog Produk - Toko Kami</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      margin: 0;
+      background: #f8f9fa;
+    }
+
+    header {
+      background: #007bff;
+      color: white;
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .card-content {
+      padding: 15px;
+    }
+
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .card p {
+      font-size: 14px;
+      color: #555;
+      height: 40px;
+      overflow: hidden;
+    }
+
+    .price {
+      font-size: 16px;
+      font-weight: bold;
+      color: #28a745;
+      margin: 10px 0;
+    }
+
+    .btn {
+      display: inline-block;
+      background: #007bff;
+      color: white;
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      transition: background 0.3s;
+      margin-right: 5px;
+    }
+
+    .btn:hover {
+      background: #0056b3;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      background: #222;
+      color: #ddd;
+      font-size: 14px;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.6);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 5% auto;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 600px;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+      animation: fadeIn 0.3s;
+    }
+
+    .modal-content img {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: #000;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Daftar Produk Kami</h1>
+    <p>Pilihan terbaik untuk Anda</p>
+  </header>
+
+  <section class="container">
+    <!-- Produk 1 -->
+    <div class="card">
+      <img src="https://via.placeholder.com/300x200?text=Kemeja+Pria" alt="Produk 1">
+      <div class="card-content">
+        <h3>Kemeja Pria Katun Premium</h3>
+        <p>Kemeja bahan katun adem dan nyaman dipakai.</p>
+        <div class="price">Rp 199.000</div>
+        <a href="#" class="btn" onclick="showDetail(1)">Lihat Detail</a>
+        <a href="#" class="btn">Beli</a>
+      </div>
+    </div>
+
+    <!-- Produk 2 -->
+    <div class="card">
+      <img src="https://via.placeholder.com/300x200?text=Sneakers+Wanita" alt="Produk 2">
+      <div class="card-content">
+        <h3>Sneakers Wanita Modern</h3>
+        <p>Sepatu ringan dan nyaman, cocok untuk aktivitas harian.</p>
+        <div class="price">Rp 299.000</div>
+        <a href="#" class="btn" onclick="showDetail(2)">Lihat Detail</a>
+        <a href="#" class="btn">Beli</a>
+      </div>
+    </div>
+
+    <!-- Produk 3 -->
+    <div class="card">
+      <img src="https://via.placeholder.com/300x200?text=Jam+Tangan" alt="Produk 3">
+      <div class="card-content">
+        <h3>Jam Tangan Elegan</h3>
+        <p>Desain klasik dengan tali kulit asli dan ketahanan air.</p>
+        <div class="price">Rp 450.000</div>
+        <a href="#" class="btn" onclick="showDetail(3)">Lihat Detail</a>
+        <a href="#" class="btn">Beli</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2025 TokoKami.com - Semua Hak Dilindungi
+  </footer>
+
+  <!-- MODAL DETAIL PRODUK -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <img id="modalImg" src="" alt="Detail Produk">
+      <h2 id="modalTitle"></h2>
+      <p id="modalDesc"></p>
+      <div class="price" id="modalPrice"></div>
+    </div>
+  </div>
+
+  <script>
+    const products = {
+      1: {
+        title: "Kemeja Pria Katun Premium",
+        desc: "Kemeja pria berbahan katun 100% premium, adem, tidak mudah kusut, dan cocok untuk acara formal maupun santai. Tersedia dalam berbagai ukuran (S-XL).",
+        price: "Rp 199.000",
+        img: "https://via.placeholder.com/600x400?text=Kemeja+Pria+Katun+Premium"
+      },
+      2: {
+        title: "Sneakers Wanita Modern",
+        desc: "Sneakers wanita dengan desain stylish, ringan, dan empuk di kaki. Tersedia warna putih, pink, dan hitam. Ideal untuk jalan santai atau olahraga ringan.",
+        price: "Rp 299.000",
+        img: "https://via.placeholder.com/600x400?text=Sneakers+Wanita+Modern"
+      },
+      3: {
+        title: "Jam Tangan Elegan",
+        desc: "Jam tangan analog bergaya elegan dengan tali kulit asli dan fitur water resistant 3ATM. Cocok untuk melengkapi gaya profesional Anda.",
+        price: "Rp 450.000",
+        img: "https://via.placeholder.com/600x400?text=Jam+Tangan+Elegan"
+      }
+    };
+
+    function showDetail(id) {
+      const p = products[id];
+      document.getElementById("modalImg").src = p.img;
+      document.getElementById("modalTitle").textContent = p.title;
+      document.getElementById("modalDesc").textContent = p.desc;
+      document.getElementById("modalPrice").textContent = p.price;
+      document.getElementById("modal").style.display = "block";
+    }
+
+    function closeModal() {
+      document.getElementById("modal").style.display = "none";
+    }
+
+    window.onclick = function(event) {
+      if (event.target == document.getElementById("modal")) {
+        closeModal();
+      }
+    };
+  </script>
+</body>
 </html>
