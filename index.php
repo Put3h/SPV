@@ -8,6 +8,9 @@
 </head>
 <body>
 
+<div class="menu">
+<?php include 'menu.php';?>
+</div>
     <iframe id="myIframeId" width="100%" height="600"></iframe>
     <button onclick="loadPage1()">Load Page 1</button>
     <button onclick="loadPage2()">Load Page 2</button>
@@ -27,6 +30,7 @@
   
 </body>
 </html>
+
 
 
 
