@@ -1,41 +1,44 @@
-<!doctype html>
-<html lang="id">
+<!DOCTYPE html>
+<html>
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dashboard Baru</title>
-
+    <title>CRUD Excel - Tanpa Upload</title>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
 
-    <button onclick="loadPage1()">Load Page 1</button>
-    <button onclick="loadPage2()">Load Page 2</button>
+<h2>CRUD Excel 5 Kolom (Tanpa Upload)</h2>
 
-    <iframe id="myIframeId" width="100%" height="550"></iframe>
+<button onclick="loadExcel()">Load File Excel</button>
+<br><br>
 
-    <script>
-        function loadPage1() {
-            var iframe = document.getElementById("myIframeId");
-            iframe.src = "https://1drv.ms/x/c/d496409f748ecbb3/IQQylZKXL8RJTr5SCLTNOzM-Afliys_VCsQFPXqN4vU7Hg4?em=2&wdAllowInteractivity=False&wdHideGridlines=True&wdHideHeaders=False&wdDownloadButton=False&wdInConfigurator=True&wdInConfigurator=True";
-        }
-        function loadPage2() {
-            var iframe = document.getElementById("myIframeId");
-            iframe.src = "home.html";
-        }
+<h3>Tambah / Edit Data</h3>
 
-    </script>
+<input type="date" id="tanggal"><br>
+<input type="text" id="uraian" placeholder="Uraian"><br>
+<input type="number" id="masuk" placeholder="Masuk"><br>
+<input type="number" id="keluar" placeholder="Keluar"><br>
+<input type="number" id="saldo" placeholder="Saldo"><br><br>
 
-  
+<button onclick="addData()">Simpan</button>
+
+<table border="1" cellpadding="6" style="margin-top:20px;">
+  <thead>
+    <tr>
+      <th>Tanggal</th>
+      <th>Uraian</th>
+      <th>Masuk</th>
+      <th>Keluar</th>
+      <th>Saldo</th>
+      <th>Aksi</th>
+    </tr>
+  </thead>
+  <tbody id="table-body"></tbody>
+</table>
+
+<br>
+<button onclick="downloadExcel()">Download Excel</button>
+
+<script src="app.js"></script>
+
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
