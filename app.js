@@ -3,7 +3,7 @@ let editIndex = -1;
 
 // Load Excel dari direktori web
 function loadExcel() {
-  fetch("keuangan.xlsx")
+  fetch("Keuangan.xlsx")
     .then(res => res.arrayBuffer())
     .then(buffer => {
       const workbook = XLSX.read(buffer, { type: "array" });
