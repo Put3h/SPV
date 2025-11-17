@@ -1,5 +1,0 @@
-<?php
-
-Echo "Home.php";
-
-?>
