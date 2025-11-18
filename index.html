@@ -1,44 +1,179 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>CRUD Excel - Tanpa Upload</title>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <meta charset="UTF-8">
+  <title>CRUD Transaksi</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
-<body>
 
-<h2>CRUD Excel 5 Kolom (Tanpa Upload)</h2>
+<body class="bg-light">
 
-<button onclick="loadExcel()">Load File Excel</button>
-<br><br>
+<!-- LOGIN PAGE -->
+<div class="container mt-5" id="loginPage">
+  <div class="col-md-4 mx-auto card p-4">
+    <h3 class="text-center">Login</h3>
+    <input id="username" class="form-control mt-2" placeholder="Username">
+    <input id="password" type="password" class="form-control mt-2" placeholder="Password">
+    <button class="btn btn-primary w-100 mt-3" onclick="login()">Login</button>
+    <div id="loginError" class="text-danger mt-2"></div>
+  </div>
+</div>
 
-<h3>Tambah / Edit Data</h3>
+<!-- MAIN PAGE -->
+<div class="container mt-5" id="mainPage" style="display:none;">
+  <h2 class="mb-3">Transaksi Keuangan</h2>
 
-<input type="date" id="tanggal"><br>
-<input type="text" id="uraian" placeholder="Uraian"><br>
-<input type="number" id="masuk" placeholder="Masuk"><br>
-<input type="number" id="keluar" placeholder="Keluar"><br>
-<input type="number" id="saldo" placeholder="Saldo"><br><br>
+  <!-- INPUT FORM -->
+  <div class="card p-3">
+    <div class="row">
+      <div class="col-md-2">
+        <input type="date" id="tanggal" class="form-control" required>
+      </div>
+      <div class="col-md-3">
+        <input id="uraian" class="form-control" placeholder="Uraian" required>
+      </div>
+      <div class="col-md-2">
+        <input id="masuk" class="form-control" placeholder="Masuk" type="number" min="0">
+      </div>
+      <div class="col-md-2">
+        <input id="keluar" class="form-control" placeholder="Keluar" type="number" min="0">
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-success w-100" onclick="addData()">Tambah</button>
+      </div>
+    </div>
 
-<button onclick="addData()">Simpan</button>
+    <small class="text-danger mt-2" id="errForm"></small>
+  </div>
 
-<table border="1" cellpadding="6" style="margin-top:20px;">
-  <thead>
-    <tr>
-      <th>Tanggal</th>
-      <th>Uraian</th>
-      <th>Masuk</th>
-      <th>Keluar</th>
-      <th>Saldo</th>
-      <th>Aksi</th>
-    </tr>
-  </thead>
-  <tbody id="table-body"></tbody>
-</table>
+  <!-- TABLE -->
+  <table class="table table-bordered table-striped mt-4" id="tblData">
+    <thead class="table-dark">
+      <tr>
+        <th>Tanggal</th>
+        <th>Uraian</th>
+        <th>Masuk</th>
+        <th>Keluar</th>
+        <th>Saldo</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
-<br>
-<button onclick="downloadExcel()">Download Excel</button>
+</div>
 
-<script src="app.js"></script>
+<script>
+const API = "PASTE_URL_WEB_APP_DI_SINI";  // <--- ganti
+
+/* ========================
+   LOGIN
+======================== */
+function login() {
+  fetch(`${API}?action=login&username=${username.value}&password=${password.value}`)
+    .then(r => r.json())
+    .then(res => {
+      if (res.success) {
+        loginPage.style.display = "none";
+        mainPage.style.display = "block";
+        loadData();
+      } else {
+        loginError.textContent = "Username atau password salah!";
+      }
+    });
+}
+
+/* ========================
+   READ DATA
+======================== */
+function loadData() {
+  fetch(`${API}?action=read`)
+    .then(r => r.json())
+    .then(data => {
+      const tbody = document.querySelector("#tblData tbody");
+      tbody.innerHTML = "";
+      data.forEach(row => {
+        tbody.innerHTML += `
+          <tr>
+            <td><input type="date" class="form-control" id="tgl-${row.id}" value="${row.tanggal}"></td>
+            <td><input class="form-control" id="ura-${row.id}" value="${row.uraian}"></td>
+            <td><input type="number" class="form-control" id="msk-${row.id}" value="${row.masuk}"></td>
+            <td><input type="number" class="form-control" id="klr-${row.id}" value="${row.keluar}"></td>
+            <td>${row.saldo}</td>
+            <td>
+              <button class="btn btn-warning btn-sm" onclick="updateData('${row.id}')">Update</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteData('${row.id}')">Hapus</button>
+            </td>
+          </tr>
+        `;
+      });
+    });
+}
+
+/* ========================
+   VALIDATION
+======================== */
+function validateForm(tgl, ura, masuk, keluar) {
+  if (!tgl || !ura) return "Tanggal dan uraian wajib diisi!";
+  if (masuk < 0 || keluar < 0) return "Masuk/Keluar tidak boleh negatif!";
+  if (masuk === "" && keluar === "") return "Salah satu Masuk/Keluar harus diisi!";
+  return "";
+}
+
+/* ========================
+   CREATE
+======================== */
+function addData() {
+  const tgl = tanggal.value;
+  const ura = uraian.value;
+  const masuk = Number(document.getElementById("masuk").value || 0);
+  const keluar = Number(document.getElementById("keluar").value || 0);
+
+  const err = validateForm(tgl, ura, masuk, keluar);
+  if (err) {
+    errForm.textContent = err;
+    return;
+  }
+
+  const body = { tanggal: tgl, uraian: ura, masuk, keluar };
+
+  fetch(`${API}?action=create`, {
+    method: "POST",
+    body: JSON.stringify(body)
+  }).then(() => {
+    errForm.textContent = "";
+    loadData();
+  });
+}
+
+/* ========================
+   UPDATE
+======================== */
+function updateData(id) {
+  const body = {
+    id,
+    tanggal: document.getElementById(`tgl-${id}`).value,
+    uraian: document.getElementById(`ura-${id}`).value,
+    masuk: Number(document.getElementById(`msk-${id}`).value),
+    keluar: Number(document.getElementById(`klr-${id}`).value)
+  };
+
+  fetch(`${API}?action=update`, {
+    method: "PUT",
+    body: JSON.stringify(body)
+  }).then(loadData);
+}
+
+/* ========================
+   DELETE
+======================== */
+function deleteData(id) {
+  if (!confirm("Yakin hapus data ini?")) return;
+  fetch(`${API}?action=delete&id=${id}`, {
+    method: "DELETE"
+  }).then(loadData);
+}
+</script>
 
 </body>
 </html>
