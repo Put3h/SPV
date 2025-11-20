@@ -1,1 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
 
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+  <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+    <h2 class="text-2xl font-bold text-center mb-4">Login Uang Kas</h2>
+
+    <input id="email"
+           type="email"
+           placeholder="Email"
+           class="w-full border p-2 rounded mb-3" />
+
+    <input id="password"
+           type="password"
+           placeholder="Password"
+           class="w-full border p-2 rounded mb-3" />
+
+    <button onclick="login()"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded">
+      Login
+    </button>
+  </div>
+
+  <script>
+    const supabase = supabase.createClient("YOUR_URL", "YOUR_ANON_KEY");
+
+    async function login() {
+      const email = email.value;
+      const password = password.value;
+
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+      if (error) return alert(error.message);
+
+      window.location = "dashboard.html";
+    }
+  </script>
+
+</body>
+</html>
