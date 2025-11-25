@@ -1,68 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>CRUD Supabase - GitHub Pages</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-  <script type="module" src="app.js"></script>
+  <title>Aplikasi SPA</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
-<body class="bg-light">
-  <div class="container py-4">
-    <h2 class="mb-4 text-center">CRUD Supabase (GitHub Pages)</h2>
+<body>
 
-    <!-- Form -->
-    <div class="card p-3 mb-4">
-      <div class="row g-3">
-        <div class="col-md-5">
-          <input id="name" class="form-control" placeholder="Nama">
-        </div>
-        <div class="col-md-5">
-          <input id="price" class="form-control" placeholder="Harga">
-        </div>
-        <div class="col-md-2 d-grid">
-          <button id="btnAdd" class="btn btn-primary">Tambah</button>
-        </div>
-      </div>
-    </div>
+  <div id="app"></div>
 
-    <!-- TABEL -->
-    <div class="card p-3">
-      <table class="table table-bordered table-striped">
-        <thead class="table-dark">
-          <tr>
-            <th>ID</th>
-            <th>Nama</th>
-            <th>Harga</th>
-            <th width="150px">Aksi</th>
-          </tr>
-        </thead>
-        <tbody id="tableBody"></tbody>
-      </table>
-    </div>
-  </div>
+  <script type="module">
+    import "./router.js";
+  </script>
 
-  <!-- EDIT MODAL -->
-  <div class="modal fade" id="editModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5>Edit Data</h5>
-          <button class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <input id="editName" class="form-control mb-2" placeholder="Nama">
-          <input id="editPrice" class="form-control" placeholder="Harga">
-          <input type="hidden" id="editId">
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-          <button id="btnSaveEdit" class="btn btn-success">Simpan</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
