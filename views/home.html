@@ -1,0 +1,15 @@
+<div class="card center">
+  <h2 id="nama"></h2>
+
+  <button class="btn" onclick="window.location.hash='/admin'">Halaman Admin</button><br><br>
+  <button class="btn" id="btnLogout">Logout</button>
+</div>
+
+<script type="module">
+  import { getUser, logout } from "../auth.js";
+
+  const user = getUser();
+  document.getElementById("nama").innerHTML = "Halo, " + user.nama_lengkap;
+
+  document.getElementById("btnLogout").onclick = logout;
+</script>
