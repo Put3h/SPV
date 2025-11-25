@@ -1,0 +1,27 @@
+<div class="card center">
+  <h2>Login</h2>
+
+  <input id="username" class="input" placeholder="Username">
+  <input id="password" type="password" class="input" placeholder="Password">
+  <button id="btnLogin" class="btn">Login</button>
+
+  <p id="msg"></p>
+</div>
+
+<script type="module">
+  import { login } from "../auth.js";
+
+  document.getElementById("btnLogin").onclick = async () => {
+    const u = username.value;
+    const p = password.value;
+
+    const user = await login(u, p);
+    if (!user) {
+      msg.textContent = "Login gagal!";
+      msg.style.color = "red";
+      return;
+    }
+
+    window.location.hash = "/home";
+  };
+</script>
