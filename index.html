@@ -1,181 +1,68 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>CRUD Transaksi</title>
+  <title>CRUD Supabase - GitHub Pages</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <script type="module" src="app.js"></script>
 </head>
 
 <body class="bg-light">
+  <div class="container py-4">
+    <h2 class="mb-4 text-center">CRUD Supabase (GitHub Pages)</h2>
 
-<!-- LOGIN PAGE -->
-<div class="container mt-5" id="loginPage" style="display:none;">
-  <div class="col-md-4 mx-auto card p-4">
-    <h3 class="text-center">Login</h3>
-    <input id="username" class="form-control mt-2" placeholder="Username">
-    <input id="password" type="password" class="form-control mt-2" placeholder="Password">
-    <button class="btn btn-primary w-100 mt-3" onclick="login()">Login</button>
-    <div id="loginError" class="text-danger mt-2"></div>
-  </div>
-</div>
-
-<!-- MAIN PAGE -->
-<div class="container mt-5" id="mainPage">
-  <h2 class="mb-3">Transaksi Keuangan</h2>
-
-  <!-- INPUT FORM -->
-  <div class="card p-3">
-    <div class="row">
-      <div class="col-md-2">
-        <input type="date" id="tanggal" class="form-control" required>
-      </div>
-      <div class="col-md-3">
-        <input id="uraian" class="form-control" placeholder="Uraian" required>
-      </div>
-      <div class="col-md-2">
-        <input id="masuk" class="form-control" placeholder="Masuk" type="number" min="0">
-      </div>
-      <div class="col-md-2">
-        <input id="keluar" class="form-control" placeholder="Keluar" type="number" min="0">
-      </div>
-      <div class="col-md-2">
-        <button class="btn btn-success w-100" onclick="addData()">Tambah</button>
+    <!-- Form -->
+    <div class="card p-3 mb-4">
+      <div class="row g-3">
+        <div class="col-md-5">
+          <input id="name" class="form-control" placeholder="Nama">
+        </div>
+        <div class="col-md-5">
+          <input id="price" class="form-control" placeholder="Harga">
+        </div>
+        <div class="col-md-2 d-grid">
+          <button id="btnAdd" class="btn btn-primary">Tambah</button>
+        </div>
       </div>
     </div>
 
-    <small class="text-danger mt-2" id="errForm"></small>
+    <!-- TABEL -->
+    <div class="card p-3">
+      <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th>ID</th>
+            <th>Nama</th>
+            <th>Harga</th>
+            <th width="150px">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
   </div>
 
-  <!-- TABLE -->
-  <table class="table table-bordered table-striped mt-4" id="tblData">
-    <thead class="table-dark">
-      <tr>
-        <th>Tanggal</th>
-        <th>Uraian</th>
-        <th>Masuk</th>
-        <th>Keluar</th>
-        <th>Saldo</th>
-        <th>Aksi</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <!-- EDIT MODAL -->
+  <div class="modal fade" id="editModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>Edit Data</h5>
+          <button class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input id="editName" class="form-control mb-2" placeholder="Nama">
+          <input id="editPrice" class="form-control" placeholder="Harga">
+          <input type="hidden" id="editId">
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+          <button id="btnSaveEdit" class="btn btn-success">Simpan</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-</div>
-
-<script>
-const API = "https://script.google.com/macros/s/AKfycbxP9DtcbkglhSjwAWlHMtP7gWWPNdvXuyI49DMnQ8vlmw8WhsS_IVmFm1SNQRgcOqEK9A/exec";  // <--- ganti
-
-/* ========================
-   LOGIN
-======================== */
-function login() {
-  fetch(`${API}?action=login&username=${username.value}&password=${password.value}`)
-    .then(r => r.json())
-    .then(res => {
-      if (res.success) {
-        loginPage.style.display = "none";
-        mainPage.style.display = "block";
-        loadData();
-      } else {
-        loginError.textContent = "Username atau password salah!";
-      }
-    });
-}
-
-/* ========================
-   READ DATA
-======================== */
-function loadData() {
-  fetch(`${API}?action=read`)
-    .then(r => r.json())
-    .then(data => {
-      const tbody = document.querySelector("#tblData tbody");
-      tbody.innerHTML = "";
-      data.forEach(row => {
-        tbody.innerHTML += `
-          <tr>
-            <td><input type="date" class="form-control" id="tgl-${row.id}" value="${row.tanggal}"></td>
-            <td><input class="form-control" id="ura-${row.id}" value="${row.uraian}"></td>
-            <td><input type="number" class="form-control" id="msk-${row.id}" value="${row.masuk}"></td>
-            <td><input type="number" class="form-control" id="klr-${row.id}" value="${row.keluar}"></td>
-            <td>${row.saldo}</td>
-            <td>
-              <button class="btn btn-warning btn-sm" onclick="updateData('${row.id}')">Update</button>
-              <button class="btn btn-danger btn-sm" onclick="deleteData('${row.id}')">Hapus</button>
-            </td>
-          </tr>
-        `;
-      });
-    });
-}
-
-/* ========================
-   VALIDATION
-======================== */
-function validateForm(tgl, ura, masuk, keluar) {
-  if (!tgl || !ura) return "Tanggal dan uraian wajib diisi!";
-  if (masuk < 0 || keluar < 0) return "Masuk/Keluar tidak boleh negatif!";
-  if (masuk === "" && keluar === "") return "Salah satu Masuk/Keluar harus diisi!";
-  return "";
-}
-
-/* ========================
-   CREATE
-======================== */
-function addData() {
-  const tgl = tanggal.value;
-  const ura = uraian.value;
-  const masuk = Number(document.getElementById("masuk").value || 0);
-  const keluar = Number(document.getElementById("keluar").value || 0);
-
-  const err = validateForm(tgl, ura, masuk, keluar);
-  if (err) {
-    errForm.textContent = err;
-    return;
-  }
-
-  const body = { tanggal: tgl, uraian: ura, masuk, keluar };
-
-  fetch(`${API}?action=create`, {
-    method: "POST",
-    body: JSON.stringify(body)
-  }).then(() => {
-    errForm.textContent = "";
-    loadData();
-  });
-}
-
-/* ========================
-   UPDATE
-======================== */
-function updateData(id) {
-  const body = {
-    id,
-    tanggal: document.getElementById(`tgl-${id}`).value,
-    uraian: document.getElementById(`ura-${id}`).value,
-    masuk: Number(document.getElementById(`msk-${id}`).value),
-    keluar: Number(document.getElementById(`klr-${id}`).value)
-  };
-
-  fetch(`${API}?action=update`, {
-    method: "PUT",
-    body: JSON.stringify(body)
-  }).then(loadData);
-}
-
-/* ========================
-   DELETE
-======================== */
-function deleteData(id) {
-  if (!confirm("Yakin hapus data ini?")) return;
-  fetch(`${API}?action=delete&id=${id}`, {
-    method: "DELETE"
-  }).then(loadData);
-}
-</script>
-
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
-
