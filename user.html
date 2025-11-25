@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>User</title>
+  <style>body{font-family:Arial;padding:20px}</style>
+</head>
+<body>
+  <script>
+    const s = localStorage.getItem("myapp_session");
+    if (!s) location.href = "login.html";
+
+    const session = JSON.parse(s);
+    if (session.rule !== "user") {
+      if (session.rule === "admin") location.href = "admin.html";
+      else location.href = "login.html";
+    }
+  </script>
+
+  <h2>Halaman User</h2>
+  <p>Selamat datang, <strong id="nama"></strong></p>
+
+  <button id="btnLogout">Logout</button>
+
+  <script>
+    const session = JSON.parse(localStorage.getItem("myapp_session"));
+    document.getElementById("nama").innerText = session ? session.nama_lengkap : "";
+
+    document.getElementById("btnLogout").addEventListener("click", () => {
+      localStorage.removeItem("myapp_session");
+      location.href = "login.html";
+    });
+  </script>
+</body>
+</html>
