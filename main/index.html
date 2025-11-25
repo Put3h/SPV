@@ -1,47 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Login</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <meta charset="UTF-8">
+  <title>CRUD Supabase - GitHub Pages</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <script type="module" src="app.js"></script>
 </head>
 
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+<body class="bg-light">
+  <div class="container py-4">
+    <h2 class="mb-4 text-center">CRUD Supabase (GitHub Pages)</h2>
 
-  <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-    <h2 class="text-2xl font-bold text-center mb-4">Login</h2>
+    <!-- Form -->
+    <div class="card p-3 mb-4">
+      <div class="row g-3">
+        <div class="col-md-5">
+          <input id="name" class="form-control" placeholder="Nama">
+        </div>
+        <div class="col-md-5">
+          <input id="price" class="form-control" placeholder="Harga">
+        </div>
+        <div class="col-md-2 d-grid">
+          <button id="btnAdd" class="btn btn-primary">Tambah</button>
+        </div>
+      </div>
+    </div>
 
-    <input id="email"
-           type="email"
-           placeholder="Email"
-           class="w-full border p-2 rounded mb-3" />
-
-    <input id="password"
-           type="password"
-           placeholder="Password"
-           class="w-full border p-2 rounded mb-3" />
-
-    <button onclick="login()"
-            class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded">
-      Login
-    </button>
+    <!-- TABEL -->
+    <div class="card p-3">
+      <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th>ID</th>
+            <th>Nama</th>
+            <th>Harga</th>
+            <th width="150px">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
   </div>
 
-  <script>
-    const supabase = supabase.createClient("https://lahblqaaqadcmdowdsvd.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxhaGJscWFhcWFkY21kb3dkc3ZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM2MDg5NzUsImV4cCI6MjA3OTE4NDk3NX0.MfRcythiqYSV-qfNMA7a8YRFDGsDmsn0JKbf1rQg_vM");
+  <!-- EDIT MODAL -->
+  <div class="modal fade" id="editModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>Edit Data</h5>
+          <button class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input id="editName" class="form-control mb-2" placeholder="Nama">
+          <input id="editPrice" class="form-control" placeholder="Harga">
+          <input type="hidden" id="editId">
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+          <button id="btnSaveEdit" class="btn btn-success">Simpan</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    async function login() {
-      const email = email.value;
-      const password = password.value;
-
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-
-      if (error) return alert(error.message);
-
-      window.location = "dashboard.html";
-    }
-  </script>
-
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
