@@ -1,112 +1,75 @@
-let data = [];
-let editIndex = -1;
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-// Load Excel dari direktori web
-function loadExcel() {
-  fetch("Keuangan.xlsx")
-    .then(res => res.arrayBuffer())
-    .then(buffer => {
-      const workbook = XLSX.read(buffer, { type: "array" });
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+// === MASUKKAN DATA SUPABASE DI SINI ===
+const supabase = createClient(
+  "https://lahblqaaqadcmdowdsvd.supabase.co",        // contoh: https://abcxyz.supabase.co
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxhaGJscWFhcWFkY21kb3dkc3ZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM2MDg5NzUsImV4cCI6MjA3OTE4NDk3NX0.MfRcythiqYSV-qfNMA7a8YRFDGsDmsn0JKbf1rQg_vM"    // anon public key
+);
 
-      const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
-      // buang header jika ada
-      if (rows[0][0] === "Tanggal") rows.shift();
-
-      data = rows;
-      loadTable();
-
-      alert("File Excel berhasil dimuat.");
-    })
-    .catch(err => {
-      console.error(err);
-      alert("Gagal memuat file Excel!");
-    });
-}
-
-// Tampilkan tabel
-function loadTable() {
-  const tbody = document.getElementById("table-body");
+// === LOAD DATA ===
+async function loadData() {
+  const { data } = await supabase.from("products").select("*").order("id", { ascending: true });
+  const tbody = document.getElementById("tableBody");
   tbody.innerHTML = "";
 
-  data.forEach((row, index) => {
+  data.forEach(row => {
     tbody.innerHTML += `
       <tr>
-        <td>${row[0]}</td>
-        <td>${row[1]}</td>
-        <td>${row[2]}</td>
-        <td>${row[3]}</td>
-        <td>${row[4]}</td>
+        <td>${row.id}</td>
+        <td>${row.name}</td>
+        <td>${row.price}</td>
         <td>
-          <button onclick="editData(${index})">Edit</button>
-          <button onclick="deleteData(${index})">Hapus</button>
+          <button class="btn btn-warning btn-sm" onclick="openEdit(${row.id}, '${row.name}', '${row.price}')">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteData(${row.id})">Hapus</button>
         </td>
       </tr>
     `;
   });
 }
 
-// Tambah data
-function addData() {
-  const row = [
-    document.getElementById("tanggal").value,
-    document.getElementById("uraian").value,
-    document.getElementById("masuk").value,
-    document.getElementById("keluar").value,
-    document.getElementById("saldo").value,
-  ];
+// === CREATE ===
+document.getElementById("btnAdd").onclick = async () => {
+  const name = document.getElementById("name").value;
+  const price = document.getElementById("price").value;
 
-  if (!row[0] || !row[1]) {
-    return alert("Tanggal & Uraian wajib diisi!");
-  }
+  if (!name || !price) return alert("Isi semua data!");
 
-  if (editIndex === -1) {
-    data.push(row);
-  } else {
-    data[editIndex] = row;
-    editIndex = -1;
-  }
+  await supabase.from("products").insert({ name, price });
+  loadData();
 
-  clearForm();
-  loadTable();
-}
+  document.getElementById("name").value = "";
+  document.getElementById("price").value = "";
+};
 
-// Edit data
-function editData(index) {
-  editIndex = index;
-  const row = data[index];
+// === OPEN EDIT MODAL ===
+window.openEdit = (id, name, price) => {
+  document.getElementById("editId").value = id;
+  document.getElementById("editName").value = name;
+  document.getElementById("editPrice").value = price;
 
-  document.getElementById("tanggal").value = row[0];
-  document.getElementById("uraian").value = row[1];
-  document.getElementById("masuk").value = row[2];
-  document.getElementById("keluar").value = row[3];
-  document.getElementById("saldo").value = row[4];
-}
+  const modal = new bootstrap.Modal(document.getElementById("editModal"));
+  modal.show();
+};
 
-// Hapus data
-function deleteData(index) {
-  if (confirm("Yakin hapus?")) {
-    data.splice(index, 1);
-    loadTable();
-  }
-}
+// === UPDATE ===
+document.getElementById("btnSaveEdit").onclick = async () => {
+  const id = document.getElementById("editId").value;
+  const name = document.getElementById("editName").value;
+  const price = document.getElementById("editPrice").value;
 
-// Kosongkan form input
-function clearForm() {
-  document.getElementById("tanggal").value = "";
-  document.getElementById("uraian").value = "";
-  document.getElementById("masuk").value = "";
-  document.getElementById("keluar").value = "";
-  document.getElementById("saldo").value = "";
-}
+  await supabase.from("products").update({ name, price }).eq("id", id);
+  loadData();
 
-// Download Excel baru
-function downloadExcel() {
-  const header = [["Tanggal", "Uraian", "Masuk", "Keluar", "Saldo"]];
-  const ws = XLSX.utils.aoa_to_sheet([...header, ...data]);
-  const wb = XLSX.utils.book_new();
+  const modal = bootstrap.Modal.getInstance(document.getElementById("editModal"));
+  modal.hide();
+};
 
-  XLSX.utils.book_append_sheet(wb, ws, "Keuangan");
-  XLSX.writeFile(wb, "data_keuangan_baru.xlsx");
-}
+// === DELETE ===
+window.deleteData = async (id) => {
+  if (!confirm("Yakin hapus?")) return;
+  await supabase.from("products").delete().eq("id", id);
+  loadData();
+};
+
+// Load data saat web dibuka
+loadData();
