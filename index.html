@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
+  <div class="card shadow-lg" style="width: 380px;">
+    <div class="card-body">
+      <h3 class="text-center mb-4">Login</h3>
+
+      <div class="mb-3">
+        <label class="form-label">Username</label>
+        <input id="username" class="form-control" placeholder="Masukkan username">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input id="password" type="password" class="form-control" placeholder="Masukkan password">
+      </div>
+
+      <button onclick="login()" class="btn btn-primary w-100">Login</button>
+    </div>
+  </div>
+</div>
+
+<script src="supabase.js"></script>
+<script>
+async function login() {
+  const user = document.getElementById('username').value;
+  const pass = document.getElementById('password').value;
+
+  const { data, error } = await supabase
+    .from("pengguna")
+    .select("*")
+    .eq("username", user)
+    .eq("password", pass)
+    .single();
+
+  if (error || !data) {
+    alert("Username atau password salah!");
+    return;
+  }
+
+  localStorage.setItem("pengguna", JSON.stringify(data));
+
+  if (data.rule === "admin") {
+    window.location.href = "admin.html";
+  } else {
+    window.location.href = "user.html";
+  }
+}
+</script>
+</body>
+</html>
