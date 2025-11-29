@@ -7,6 +7,7 @@
 </head>
 <body>
 
+<!-- NAVBAR -->
 <nav class="navbar navbar-dark bg-dark">
   <div class="container-fluid">
     <span class="navbar-brand">Admin Panel</span>
@@ -14,27 +15,249 @@
   </div>
 </nav>
 
-<div class="container mt-5">
+<div class="container mt-4">
+
+  <h2>Data Pengguna</h2>
+
+  <!-- BUTTON TAMBAH -->
+  <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalAdd">+ Tambah Pengguna</button>
+
+  <!-- TABEL DATA -->
   <div class="card shadow">
     <div class="card-body">
-      <h3 class="card-title">Selamat datang, Admin!</h3>
-      <p>Anda memiliki akses penuh ke sistem.</p>
+      <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Password</th>
+            <th>Rule</th>
+            <th>Nama Lengkap</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          <tr><td colspan="6" class="text-center">Memuat...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+
+
+
+
+
+
+<!-- ===================== MODAL TAMBAH ===================== -->
+<div class="modal fade" id="modalAdd">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Tambah Pengguna</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <input class="form-control mb-2" id="add-username" placeholder="Username">
+        <input class="form-control mb-2" id="add-password" placeholder="Password">
+        <input class="form-control mb-2" id="add-rule" placeholder="Rule (admin/user)">
+        <input class="form-control mb-2" id="add-nama" placeholder="Nama lengkap">
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button class="btn btn-primary" onclick="addData()">Simpan</button>
+      </div>
+
     </div>
   </div>
 </div>
 
-<script>
-const data = JSON.parse(localStorage.getItem("pengguna"));
 
+
+
+<!-- ===================== MODAL EDIT ===================== -->
+<div class="modal fade" id="modalEdit">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Pengguna</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <input type="hidden" id="edit-id">
+        <input class="form-control mb-2" id="edit-username" placeholder="Username">
+        <input class="form-control mb-2" id="edit-password" placeholder="Password">
+        <input class="form-control mb-2" id="edit-rule" placeholder="Rule (admin/user)">
+        <input class="form-control mb-2" id="edit-nama" placeholder="Nama lengkap">
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button class="btn btn-primary" onclick="updateData()">Update</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="supabase.js"></script>
+
+<script>
+/* ==================== CEK ROLE ==================== */
+const data = JSON.parse(localStorage.getItem("pengguna"));
 if (!data || data.rule !== "admin") {
   alert("Anda tidak punya akses ke halaman admin!");
   window.location.href = "index.html";
 }
 
+
+
+/* ==================== LOGOUT ==================== */
 function logout() {
   localStorage.removeItem("pengguna");
   window.location.href = "index.html";
 }
+
+
+
+/* ==================== LOAD DATA ==================== */
+async function loadData() {
+  const tbody = document.getElementById("table-body");
+
+  const { data, error } = await supabase
+    .from("pengguna")
+    .select("*")
+    .order("id", { ascending: true });
+
+  if (error) {
+    tbody.innerHTML = `<tr><td colspan="6">Gagal memuat data</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = "";
+
+  data.forEach(row => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${row.id}</td>
+        <td>${row.username}</td>
+        <td>${row.password}</td>
+        <td>${row.rule}</td>
+        <td>${row.nama_lengkap}</td>
+        <td>
+          <button class="btn btn-warning btn-sm" onclick="showEdit(${row.id}, '${row.username}', '${row.password}', '${row.rule}', '${row.nama_lengkap}')">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteData(${row.id})">Hapus</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+loadData(); // Panggil pertama kali
+
+
+
+
+/* ==================== ADD DATA ==================== */
+async function addData() {
+  const username = document.getElementById("add-username").value;
+  const password = document.getElementById("add-password").value;
+  const rule = document.getElementById("add-rule").value;
+  const nama = document.getElementById("add-nama").value;
+
+  const { error } = await supabase
+    .from("pengguna")
+    .insert([{ username, password, rule, nama_lengkap: nama }]);
+
+  if (error) {
+    alert("Gagal menambah data!");
+    return;
+  }
+
+  alert("Pengguna ditambah!");
+  loadData();
+
+  // Tutup modal
+  const modal = bootstrap.Modal.getInstance(document.getElementById("modalAdd"));
+  modal.hide();
+}
+
+
+
+/* ==================== SHOW EDIT MODAL ==================== */
+function showEdit(id, username, password, rule, nama) {
+  document.getElementById("edit-id").value = id;
+  document.getElementById("edit-username").value = username;
+  document.getElementById("edit-password").value = password;
+  document.getElementById("edit-rule").value = rule;
+  document.getElementById("edit-nama").value = nama;
+
+  const modal = new bootstrap.Modal(document.getElementById("modalEdit"));
+  modal.show();
+}
+
+
+
+/* ==================== UPDATE DATA ==================== */
+async function updateData() {
+  const id = document.getElementById("edit-id").value;
+
+  const username = document.getElementById("edit-username").value;
+  const password = document.getElementById("edit-password").value;
+  const rule = document.getElementById("edit-rule").value;
+  const nama = document.getElementById("edit-nama").value;
+
+  const { error } = await supabase
+    .from("pengguna")
+    .update({ username, password, rule, nama_lengkap: nama })
+    .eq("id", id);
+
+  if (error) {
+    alert("Gagal mengupdate data!");
+    return;
+  }
+
+  alert("Data berhasil diupdate!");
+  loadData();
+
+  // Tutup modal
+  const modal = bootstrap.Modal.getInstance(document.getElementById("modalEdit"));
+  modal.hide();
+}
+
+
+
+/* ==================== DELETE DATA ==================== */
+async function deleteData(id) {
+  if (!confirm("Yakin mau hapus?")) return;
+
+  const { error } = await supabase
+    .from("pengguna")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    alert("Gagal menghapus data!");
+    return;
+  }
+
+  alert("Data terhapus!");
+  loadData();
+}
+
 </script>
 
 </body>
