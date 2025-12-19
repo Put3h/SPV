@@ -36,11 +36,11 @@ window.logout = () => signOut(auth);
 onAuthStateChanged(auth, async user => {
   if (!user) {
     loginBox.style.display = "block";
-    app.style.display = "none";
+    appDiv.style.display = "none";
     return;
   }
   loginBox.style.display = "none";
-  app.style.display = "block";
+  appDiv.style.display = "block";
 
   const userSnap = await getDocs(collection(db, "users"));
   userSnap.forEach(d => {
