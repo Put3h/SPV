@@ -83,7 +83,7 @@ async function loadData() {
 
 // ❌ DELETE
 window.hapus = async id => {
-  if (currentUserRole !== "admin") return alert("Admin only");
+  if (currentUserRole !== "admin") return alert("Data Tidak Diizinkan Untuk Dihapus! Hub: SPV!");
   await deleteDoc(doc(db, "transaksi", id));
   await recalcSaldo();
   loadData();
