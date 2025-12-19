@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Finance App</title>
+  <title>KAS TEAM RAMAI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Bootstrap -->
@@ -29,8 +29,8 @@
     <button class="btn btn-outline-danger btn-sm" onclick="logout()">Logout</button>
   </div>
 
-  <!-- ================= FORM ================= -->
-  <div class="card p-3 mb-3">
+  <!-- ================= FORM (ADMIN ONLY) ================= -->
+  <div id="formBox" class="card p-3 mb-3" style="display:none">
     <div class="row g-2">
       <div class="col-md-6">
         <input type="date" id="tanggal" class="form-control">
@@ -56,7 +56,9 @@
       </div>
 
       <div class="col-12 d-grid">
-        <button class="btn btn-success" onclick="simpan()">Simpan / Update</button>
+        <button class="btn btn-success" onclick="simpan()">
+          Simpan / Update
+        </button>
       </div>
     </div>
   </div>
