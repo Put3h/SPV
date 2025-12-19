@@ -44,6 +44,9 @@ onAuthStateChanged(auth, async user => {
 
   const uSnap = await getDoc(doc(db, "users", user.uid));
   currentUserRole = uSnap.exists() ? uSnap.data().role : "viewer";
+// tampilkan form hanya untuk admin
+document.getElementById("formBox").style.display =
+  currentUserRole === "admin" ? "block" : "none";
 
   loadData();
 });
